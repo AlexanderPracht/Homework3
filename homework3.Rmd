@@ -11,7 +11,10 @@ output:
     toc_float: yes
     code_folding: show
 ---
-
+#git add -A
+#git commit -m"Your message"
+#git pull
+#git push
 
 ```{r, setup, echo=FALSE}
 knitr::opts_chunk$set(
