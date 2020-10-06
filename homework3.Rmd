@@ -218,6 +218,35 @@ glimpse(movies)
 Your R code and analysis should go here. If you want to insert a blank chunk of R code you can just hit `Ctrl/Cmd+Alt+I` 
 
 ```{r}
+#calculate ci 
+director_CI<-movies %>%
+  filter(director %in% c("Steven Spielberg","Tim Burton")) %>% 
+  group_by(director) %>% 
+  summarise(director,
+         mean_rating=mean(rating),
+         count=n(),
+         t_critical= qt(0.975, count-1),
+         se_rating=sd(rating)/sqrt(count),
+         margin_of_error=t_critical*se_rating,
+         rating_low=mean_rating-margin_of_error,
+         rating_high=mean_rating+margin_of_error
+         ) %>% 
+  unique()
+
+#draw plot
+ggplot(director_CI,aes(x=mean_rating,y=director,colour=director))+
+  labs(title ="Do Spielberg and Burton have the same mean IMDB ratings?",
+      subtitle="95% confidence intervals overlap",
+      x ="Mean IMDB Rating")+
+  geom_point(size=5)+
+  geom_errorbar(aes(xmin=rating_low,xmax=rating_high),width=0.1,size=2)+
+  geom_text(aes(label=round(mean_rating,digits=2)),vjust = 0, nudge_y = 0.05,colour="black",size=6)+
+  scale_x_continuous(limits=c(6.5,8),breaks = seq(6.5, 8, by = 0.5))+
+  theme(legend.position = "none") +
+  theme_bw()
+
+  
+
 
 ```
 
