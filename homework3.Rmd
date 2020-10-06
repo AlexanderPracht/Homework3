@@ -235,6 +235,7 @@ director_CI<-movies %>%
          ) %>% 
   unique()
 
+
 #draw plot
 ggplot(director_CI,aes(x=mean_rating,y=director,colour=director))+
   #add labs
@@ -263,6 +264,24 @@ ggplot(director_CI,aes(x=mean_rating,y=director,colour=director))+
 
 ```
 
+Hypothesis testing
+```{r}
+diff_in_means=director_CI$mean_rating[1]-director_CI$mean_rating[2]
+set.seed(1234)
+director_hypothesis<-movies %>%
+  filter(director %in% c("Steven Spielberg","Tim Burton"))%>% 
+#specify the variable of interest
+  specify(rating~director) %>% 
+#create the null hypothesis
+  hypothesize(null="independence") %>% 
+#generate simulated samples
+  generate(reps=1000,type="permute") %>% 
+#find the mean difference
+  calculate(stat="diff in means",order=c("Steven Spielberg","Tim Burton"))
+director_hypothesis %>% visualize()
+director_hypothesis %>%get_pvalue(obs_stat=diff_in_means,direction="both")
+```
+The p value is smaller than 5%, so we reject the null hypothesis. The rating scores of the two directors are different.
 
 # Omega Group plc- Pay Discrimination
 
