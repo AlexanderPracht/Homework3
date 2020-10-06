@@ -332,7 +332,7 @@ knitr::include_graphics(here::here("images", "yield_curve_parable.jpg"), error =
 
 In our case we will look at US data and use the [FRED database](https://fred.stlouisfed.org/) to download historical yield curve rates, and plot the yield curves since 1999 to see when the yield curves flatten. If you want to know more, a very nice article that explains the [yield curve is and its inversion can be found here](https://fredblog.stlouisfed.org/2018/10/the-data-behind-the-fear-of-yield-curve-inversions/). At the end of this chllenge you should produce this chart
 
-```{r yield_curve_challenge, echo=FALSE, out.width="100%"}
+```{r yield_curve_challenge, echo=FALSE, out.width="50%"}
 knitr::include_graphics(here::here("images", "yield_curve_challenge.png"), error = FALSE)
 ```
 
@@ -366,6 +366,8 @@ myvars <- c('3-Month Treasury Bill',
             '30-Year Treasury Rate')
 
 maturity <- c('3m', '6m', '1y', '2y','3y','5y','7y','10y','20y','30y')
+maturity_order <- c('3m', '6m', '1y', '2y','3y','5y','7y','10y','20y','30y')
+
 
 # by default R will sort these maturities alphabetically; but since we want
 # to keep them in that exact order, we recast maturity as a factor 
@@ -407,6 +409,28 @@ This may seem long but it should be easy to produce the following three plots
 ```{r yield_curve_1, echo=FALSE, out.width="100%"}
 knitr::include_graphics(here::here("images", "yield_curve1.png"), error = FALSE)
 ```
+```{r yield_curve_g_1, out.width="100%"}
+# myvars <- factor(myvars, levels = myvars)
+
+
+yield_curve <- yield_curve %>% 
+  mutate(var = factor(var, order = TRUE, levels = myvars))
+
+yield_1 <- yield_curve %>%
+  ggplot(aes(x = date, y = price, color = as.factor(var))) +
+  geom_line() +
+  facet_wrap(~var, nrow = 5)+
+  scale_x_date(limits = as.Date(c('1960-01-01','2020-01-01')))+
+  scale_color_manual(values = c("red", "#ebc77f", "#acae19", "#a0db84", "#31cb96","#93e4e6", "#82d8fa", "#ccc9ff", "#f1a8f8", "#ff90cf"))+
+  labs(title = "Yields on U.S. Treasury rates since 1960 ",
+       x="",
+       y = "%",
+       caption="Source: St. Louis Federal Reserve Economic Database (FRED)") +
+  theme_bw()+
+  theme(legend.position = "none")
+yield_1
+```
+
 
 ### Monthly yields on US rates by duration since 1999 on a year-by-year basis
 
@@ -414,7 +438,26 @@ knitr::include_graphics(here::here("images", "yield_curve1.png"), error = FALSE)
 ```{r yield_curve_2, echo=FALSE, out.width="100%"}
 knitr::include_graphics(here::here("images", "yield_curve2.png"), error = FALSE)
 ```
+```{r yield_curve_g_2, out.width="100%"}
+# myvars <- factor(myvars, levels = myvars)
 
+
+yield_curve <- yield_curve %>% 
+  mutate(maturity = factor(maturity, order = TRUE, levels = maturity_order))
+
+yield_2 <- yield_curve %>%
+  filter(year %in% c(1999: 2020)) %>%
+  ggplot(aes(x = maturity, y = price, color = as.factor(year),group = date)) +
+  geom_line() +
+  facet_wrap(~year, nrow = 6)+
+  labs(title = "US Yield curve ",
+       x="Maturity",
+       y = "Yield (%)",
+       caption="Source: St. Louis Federal Reserve Economic Database (FRED)") +
+  theme_bw()+
+  theme(legend.position = "none")
+yield_2
+```
 
 
 ### 3-month and 10-year yields since 1999
@@ -422,7 +465,29 @@ knitr::include_graphics(here::here("images", "yield_curve2.png"), error = FALSE)
 ```{r yield_curve_3, echo=FALSE, out.width="100%"}
 knitr::include_graphics(here::here("images", "yield_curve3.png"), error = FALSE)
 ```
+```{r yield_curve_g_3, out.width="100%"}
+# myvars <- factor(myvars, levels = myvars)
+# Turn  FRED codes to human readable variables
 
+yield_curve <- yield_curve %>% 
+    mutate (year = year(date))
+
+yield_3 <- yield_curve %>%
+  filter(var %in% c('3-Month Treasury Bill','10-Year Treasury Rate'),
+         year %in% c(1999:2020)) %>%
+  ggplot(aes(x = date, y = price, color = as.factor(var))) +
+  geom_line() +
+  # scale_x_date(limits = as.Date(c('1960-01-01','2020-01-01')))+
+  scale_color_manual(values = c("red", "blue"))+
+  labs(title = "Yields 3 month and 10 year U.S. Treasury rates since 1999 ",
+       x="",
+       y = "%",
+       caption="Source: St. Louis Federal Reserve Economic Database (FRED)",
+       color="") +
+  theme_bw()
+  # theme(legend.position = "none")
+yield_3
+```
 
 According to [Wikipedia's list of recession in the United States](https://en.wikipedia.org/wiki/List_of_recessions_in_the_United_States), since 1999 there have been two recession in the US: between Mar 2001–Nov 2001 and between Dec 2007–June 2009. Does the yield curve seem to flatten before these recessions? Can a yield curve flattening really mean a recession is coming in the US? Since 1999, when did short-term (3 months) yield more than longer term (10 years) debt?
 
