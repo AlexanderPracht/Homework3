@@ -50,7 +50,7 @@ library(tidyquant)
 ```
 
 
-# Youth Risk Behavior Surveillance
+# 1. Youth Risk Behavior Surveillance
 
 Every two years, the Centers for Disease Control and Prevention conduct the [Youth Risk Behavior Surveillance System (YRBSS)](https://www.cdc.gov/healthyyouth/data/yrbs/index.htm) survey, where it takes data from high schoolers (9th through 12th grade), to analyze health patterns. You will work with a selected group of variables from a random sample of observations during one of the years the YRBSS was conducted.
 
@@ -193,7 +193,7 @@ null_dist %>%
 
 This the standard workflow for performing hypothesis tests.
 
-# IMDB ratings: Differences between directors
+# 2. IMDB ratings: Differences between directors
 
 Recall the IMBD ratings data. I would like you to explore whether the mean IMDB rating for Steven Spielberg and Tim Burton are the same or not. I have already calculated the confidence intervals for the mean ratings of these two directors and as you can see they overlap. 
 
@@ -222,7 +222,7 @@ Your R code and analysis should go here. If you want to insert a blank chunk of 
 ```
 
 
-# Omega Group plc- Pay Discrimination
+# 3. Omega Group plc- Pay Discrimination
 
 
 At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted. 
@@ -318,7 +318,7 @@ omega %>%
 > Look at the salary vs experience scatterplot. What can you infer from this plot? Explain in a couple of sentences
 
 
-# Challenge 1: Yield Curve inversion
+# 4. Challenge 1: Yield Curve inversion
 
 Every so often, we hear warnings from commentators on the "inverted yield curve" and its predictive power with respect to recessions. An explainer what a [inverted yield curve is can be found here](https://www.reuters.com/article/us-usa-economy-yieldcurve-explainer/explainer-what-is-an-inverted-yield-curve-idUSKBN1O50GA). If you'd rather listen to something, here is a great podcast from [NPR on yield curve indicators](https://www.podbean.com/media/share/dir-4zgj9-6aefd11)
 
@@ -458,7 +458,7 @@ recessions
 
 
 
-# Challenge 2:GDP components over time and among countries
+# 5. Challenge 2:GDP components over time and among countries
 
 At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). You can read more about GDP and the different approaches in calculating at the [Wikipedia GDP page](https://en.wikipedia.org/wiki/Gross_domestic_product).
 
