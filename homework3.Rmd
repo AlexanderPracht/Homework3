@@ -11,10 +11,10 @@ output:
     toc_float: yes
     code_folding: show
 ---
-git add -A
-git commit -m"Your message"
-git pull
-git push
+#git add -A
+#git commit -m"Your message"
+#git pull
+#git push
 
 ```{r, setup, echo=FALSE}
 knitr::opts_chunk$set(
@@ -540,17 +540,33 @@ UN_GDP_data  <-  read_excel(here::here("data", "Download-GDPconstant-USD-countri
 
  The first thing you need to do is to tidy the data, as it is in wide format and you must make it into long, tidy format. Please express all figures in billions (divide values by `1e9`, or $10^9$), and you want to rename the indicators into something shorter.
 
-> make sure you remove `eval=FALSE` from the next chunk of R code-- I have it there so I could knit the document
 
-```{r reshape_GDP_data, eval=FALSE}
+```{r reshape_GDP_data}
 
-tidy_GDP_data  <-  ?????????????????????????
+tidy_GDP_data  <-  UN_GDP_data %>% 
+  pivot_longer(cols = c(4:51), names_to = "years", values_to = "value") %>%
+  filter(years >= 1970)%>%
+  select(-1)%>%
+  mutate(value_bn = value/(10^9))%>%
+  mutate(IndicatorName = case_when(
+        IndicatorName %in%  "Household consumption expenditure (including Non-profit institutions serving households)" ~ "Household expenditure",
+        IndicatorName %in%  "General government final consumption expenditure" ~ "Government expenditure",
+        IndicatorName %in% "Exports of goods and services" ~ "Exports",
+        IndicatorName %in% "Imports of goods and services" ~ "Imports", 
+        IndicatorName %in% "Gross capital formation" ~ "Gross capital formation"
+  ))%>%
+  filter(IndicatorName %in% c("Gross capital formation", 
+                              "Exports",
+                              "Government expenditure", 
+                              "Household expenditure", 
+                              "Imports" ))
 
 glimpse(tidy_GDP_data)
 
 
 # Let us compare GDP components for these 3 countries
-country_list <- c("United States","India", "Germany")
+country_list <- c("United States","Turkey", "Germany")
+order_list <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports")
 ```
 
 First, can you produce this plot?
@@ -560,6 +576,22 @@ First, can you produce this plot?
 knitr::include_graphics(here::here("images", "gdp1.png"), error = FALSE)
 ```
 
+```{r plot_GDP, fig.width=10}
+plot1 <- tidy_GDP_data %>%
+  filter(Country %in% country_list)
+
+ggplot(plot1, aes(x=years, y=value_bn, colour = reorder(IndicatorName, order_list)))+
+  geom_line(aes(group=IndicatorName))+
+  scale_x_discrete(breaks = seq(1970, 2017, by = 10))+
+  scale_y_continuous(breaks = seq(0, 12500, by= 2500))+
+  facet_wrap(~Country)+
+  labs(title = "GDP components over time",
+       subtitle = "In constant 2010 USD",
+       x="",
+       y="Billion US$",
+       colour = "Components of GDP")+
+  theme_bw()
+```
 
 Secondly, recall that GDP is the sum of Household Expenditure (Consumption *C*), Gross Capital Formation (business investment *I*), Government Expenditure (G) and Net Exports (exports - imports). Even though there is an indicator `Gross Domestic Product (GDP)` in your dataframe, I would like you to calculate it given its components discussed above.
 
