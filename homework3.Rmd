@@ -236,18 +236,29 @@ director_CI<-movies %>%
 
 #draw plot
 ggplot(director_CI,aes(x=mean_rating,y=director,colour=director))+
+  #add labs
   labs(title ="Do Spielberg and Burton have the same mean IMDB ratings?",
       subtitle="95% confidence intervals overlap",
-      x ="Mean IMDB Rating")+
+      x ="Mean IMDB Rating")+    
   geom_point(size=5)+
+  #create CI bar
   geom_errorbar(aes(xmin=rating_low,xmax=rating_high),width=0.1,size=2)+
+  #add text beside points
   geom_text(aes(label=round(mean_rating,digits=2)),vjust = 0, nudge_y = 0.05,colour="black",size=6)+
+  geom_text(aes(label =round(rating_low,digits=2), x = rating_low),vjust = 0, nudge_y = 0.05,colour="black",size=5) +
+  geom_text(aes(label =round(rating_high,digits=2), x = rating_high),vjust = 0, nudge_y = 0.05,colour="black",size=5) +
+  #add intersection bar
+  geom_rect(
+    fill="grey",alpha=0.5,colour="grey",
+    aes(xmin=as.numeric(director_CI$rating_low[director=="Steven Spielberg"]),
+    xmax=as.numeric(director_CI$rating_high[director=="Tim Burton"]),
+    ymin=0,
+    ymax=Inf))+
+
+  #set scale
   scale_x_continuous(limits=c(6.5,8),breaks = seq(6.5, 8, by = 0.5))+
   theme(legend.position = "none") +
   theme_bw()
-
-  
-
 
 ```
 
