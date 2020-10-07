@@ -501,7 +501,7 @@ glimpse(tidy_GDP_data)
 
 # Let us compare GDP components for these 3 countries
 country_list <- c("United States","Turkey", "Germany")
-order_list <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports")
+
 ```
 
 First, can you produce this plot?
@@ -515,7 +515,10 @@ knitr::include_graphics(here::here("images", "gdp1.png"), error = FALSE)
 plot1 <- tidy_GDP_data %>%
   filter(Country %in% country_list)
 
-ggplot(plot1, aes(x=years, y=value_bn, colour = reorder(IndicatorName, order_list)))+
+order_list <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports")
+order_l <- factor(order_list, levels = order_list) 
+
+ggplot(plot1, aes(x=years, y=value_bn, colour = order(IndicatorName, order_l)))+
   geom_line(aes(group=IndicatorName))+
   scale_x_discrete(breaks = seq(1970, 2017, by = 10))+
   scale_y_continuous(breaks = seq(0, 12500, by= 2500))+
