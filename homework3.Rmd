@@ -407,11 +407,17 @@ This may seem long but it should be easy to produce the following three plots
 ```{r yield_curve_1, echo=FALSE, out.width="100%"}
 knitr::include_graphics(here::here("images", "yield_curve1.png"), error = FALSE)
 ```
-```{r graph1_yield_curve}
-ggplot(yield_curve, aes(x=date, y=price))+
-  geom_line()+
-  facet_wrap(~var)+
-  theme_bw()
+```{r graph1_yield_curve, fig.width=10, fig.height=8}
+myvars <- factor(myvars, levels = myvars)
+
+ggplot(yield_curve, aes(x=date, y=price, colour = reorder(var, var)))+
+  geom_line(show.legend = FALSE, group=1)+
+  facet_wrap(~maturity, ncol = 2)+
+  theme_bw()+
+  labs(title = "Yields on U.S. Treasury rates since 1960", 
+       caption = "Source: St. Louis Federal Reserve Economic Database (FRED)",
+       x="",
+       y="%")
 ```
 
 
