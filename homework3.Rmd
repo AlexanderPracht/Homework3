@@ -407,12 +407,14 @@ This may seem long but it should be easy to produce the following three plots
 ```{r yield_curve_1, echo=FALSE, out.width="100%"}
 knitr::include_graphics(here::here("images", "yield_curve1.png"), error = FALSE)
 ```
-```{r graph1_yield_curve, fig.width=10, fig.height=8}
-myvars <- factor(myvars, levels = myvars)
 
-ggplot(yield_curve, aes(x=date, y=price, colour = reorder(var, var)))+
+
+```{r graph1_yield_curve, fig.width=10, fig.height=8}
+yield_curve$var <- factor(yield_curve$var, levels =myvars)
+
+ggplot(yield_curve, aes(x=date, y=price, colour = var))+
   geom_line(show.legend = FALSE, group=1)+
-  facet_wrap(~maturity, ncol = 2)+
+  facet_wrap(~var, ncol = 2)+
   theme_bw()+
   labs(title = "Yields on U.S. Treasury rates since 1960", 
        caption = "Source: St. Louis Federal Reserve Economic Database (FRED)",
@@ -427,6 +429,25 @@ ggplot(yield_curve, aes(x=date, y=price, colour = reorder(var, var)))+
 
 ```{r yield_curve_2, echo=FALSE, out.width="100%"}
 knitr::include_graphics(here::here("images", "yield_curve2.png"), error = FALSE)
+```
+```{r, challenge1_plot2, fig.width=10}
+
+library(lubridate)
+
+plot2 <- yield_curve%>%
+  mutate(year = year(date), month = month(date))%>%
+filter(year >= 1999)
+
+ggplot(plot2, aes(x=maturity, y=price, colour=year))+
+  geom_line(show.legend = FALSE)+
+  facet_wrap(~year, ncol = 4)+
+  theme_bw()+
+  labs(title= "US Yield Curve",
+       caption = "Source: St. Loius Federal Reserve Economic Database (FRED)",
+       x= "Maturity",
+       y= "Yield (%)")
+
+
 ```
 
 
@@ -541,10 +562,9 @@ knitr::include_graphics(here::here("images", "gdp1.png"), error = FALSE)
 plot1 <- tidy_GDP_data %>%
   filter(Country %in% country_list)
 
-order_list <- c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports")
-order_l <- factor(order_list, levels = order_list) 
+plot1$IndicatorName <- factor(plot1$IndicatorName, levels =  c("Gross capital formation", "Exports", "Government expenditure", "Household expenditure", "Imports"))
 
-ggplot(plot1, aes(x=years, y=value_bn, colour = order(IndicatorName, order_l)))+
+ggplot(plot1, aes(x=years, y=value_bn, colour = IndicatorName))+
   geom_line(aes(group=IndicatorName))+
   scale_x_discrete(breaks = seq(1970, 2017, by = 10))+
   scale_y_continuous(breaks = seq(0, 12500, by= 2500))+
