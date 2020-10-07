@@ -466,16 +466,13 @@ recessions
 
 ```{r}
 plot4 <- yield_curve%>%
-  filter(var == c("3-Month Treasury Bill", "10-Year Treasury Rate"))%>%
-  mutate(var = case_when(
-        var %in% "3-Month Treasury Bill" ~ "three",
-        var %in% "10-Year Treasury Rate" ~ "ten"))%>%
-  pivot_wider(names_from = var, values_from = price)%>%
-  group_by(date)
-
-%>%
-  summarise("three" = sum(three, na.rm = TRUE), "ten" = sum(ten,na.rm = TRUE))
+  select(date, symbol, price)%>%
+  pivot_wider(names_from = symbol, values_from = price)%>%
+  mutate(diff = GS10 - TB3MS)
   
+
+ggplot(plot4, aes(x=date, y=diff))+
+  geom_line()
   
 ```
 
