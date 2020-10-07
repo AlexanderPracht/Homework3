@@ -407,6 +407,14 @@ This may seem long but it should be easy to produce the following three plots
 ```{r yield_curve_1, echo=FALSE, out.width="100%"}
 knitr::include_graphics(here::here("images", "yield_curve1.png"), error = FALSE)
 ```
+```{r graph1_yield_curve}
+ggplot(yield_curve, aes(x=date, y=price))+
+  geom_line()+
+  facet_wrap(~var)+
+  theme_bw()
+```
+
+
 
 ### Monthly yields on US rates by duration since 1999 on a year-by-year basis
 
@@ -455,6 +463,21 @@ recessions
 
 - To add the grey shaded areas corresponding to recessions, we use `geom_rect()`
 - to colour the ribbons blue/red we must see whether the spread is positive or negative and then use `geom_ribbon()`. You should be familiar with this from last week's homework on the excess weekly/monthly rentals of Santander Bikes in London.
+
+```{r}
+plot4 <- yield_curve%>%
+  filter(var == c("3-Month Treasury Bill", "10-Year Treasury Rate"))%>%
+  mutate(var = case_when(
+        var %in% "3-Month Treasury Bill" ~ "three",
+        var %in% "10-Year Treasury Rate" ~ "ten"))%>%
+  pivot_wider(names_from = var, values_from = price)%>%
+  group_by(date)
+
+%>%
+  summarise("three" = sum(three, na.rm = TRUE), "ten" = sum(ten,na.rm = TRUE))
+  
+  
+```
 
 
 
