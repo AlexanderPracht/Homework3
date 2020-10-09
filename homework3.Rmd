@@ -63,6 +63,7 @@ This data is part of the `openintro` textbook and we can load and inspect it. Th
 ```{r}
 data(yrbss)
 glimpse(yrbss)
+skim(yrbss)
 ```
 
 Before you carry on with your analysis, it's is always a good idea to check with `skimr::skim()` to get a feel for missing values, summary statistics of numerical variables, and a very rough histogram.
@@ -71,8 +72,18 @@ Before you carry on with your analysis, it's is always a good idea to check with
 
 You will first start with analyzing the `weight` of participants in kilograms. Using visualization and summary statistics, describe the distribution of weights. How many observations are we missing weights from?
 
-```{r, eda_on_weight}
+there are 1004 missing values in weight, and distribution of weight is right skewed.
 
+```{r, eda_on_weight}
+yrbss %>% 
+  filter(is.na(weight)) %>% 
+  summarize(missing_count = n()) #number of missing observations in weight
+
+yrbss %>% 
+  ggplot(aes(weight)) +
+  geom_histogram() + #plot the distribution of weight
+  theme_bw() + #theme
+  labs(title = "distribution of weight") # add title
 ```
 
 Next, consider the possible relationship between a high schooler’s weight and their physical activity. Plotting the data is a useful first step because it helps us quickly visualize trends, identify strong associations, and develop research questions.
@@ -87,16 +98,26 @@ yrbss <- yrbss %>%
 yrbss %>% filter(!is.na(physical_3plus)) %>% 
   group_by(physical_3plus) %>% 
   summarise(count = n()) %>% 
-  mutate(prop= count/sum(count))
+  mutate(prop= count/sum(count),
+         se = sqrt(prop*(1-prop)/count),  #calculate stand error
+         t_critical = qt(0.975, count-1), #calculate t critical for 95% CI
+         CI_low = prop - t_critical*se,
+         CI_high = prop + t_critical*se)  #calculate high end for 95% CI)
 
 ```
-Can you provide a 95% confidence interval for the population proportion of high schools that are *NOT* active 3 or more days per week?
 
+The  95% confidence interval for the population proportion of high schools that are *NOT* active 3 or more days per week is 0.317 to 0.345.
   
-Make a boxplot of `physical_3plus` vs. `weight`. Is there a relationship between these two variables? What did you expect and why?
+Make a boxplot of `physical_3plus` vs. `weight`. 
+The median `wieght` of `physical_3plus==yes` is larger, and there are more extreme `weight` of `physical_3plus==no`. I expected the median `wieght` of `physical_3plus==yes` is smaller because they tended to consume more energy.
 
 ```{r, boxplot}
-
+yrbss %>% 
+  filter(!is.na(physical_3plus)) %>% 
+  ggplot(aes(x = physical_3plus, y = weight, color = physical_3plus)) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(title = "boxplot of physical_3plus vs. weight") +
+  theme_bw()
 ```
 
 ## Confidence Interval
